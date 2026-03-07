@@ -1,0 +1,23 @@
+.custom-navbar {
+  background: transparent !important;
+  
+}
+.navbar {
+    z-index: 10;
+    position: fixed;
+    // color: white !important;
+    background-color: rgba(109, 108, 108, 0.5)
+
+}
+.navbar .nav-link {
+  color: #f8f8f8 !important;   // baby pink text
+}
+
+.navbar .navbar-brand {
+  color: #ffffff !important;
+}
+
+.navbar .nav-link:hover {
+  color: #ef42aa !important;
+}
+
