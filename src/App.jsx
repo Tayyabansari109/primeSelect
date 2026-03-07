@@ -7,7 +7,7 @@ import { auth } from "./config/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import Navbar from "./components/Navbar";
 // import Footer from "./components/Footer";
-import Footer from "./components/footer";
+import Footer from "./components/Footer";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.scss";
 
