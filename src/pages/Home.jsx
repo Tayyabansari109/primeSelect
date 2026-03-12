@@ -104,7 +104,7 @@ function Home() {
                   loading="lazy"
                 />
                 <div className="card-body">
-                  <h5 className="card-title-custom">{prod.name}</h5>
+                  {/* <h5 className="card-title-custom">{prod.name}</h5> */}
                   <p className="card-desc">{prod.description}</p>
                   {/* <h6>${prod.price}</h6> */}
                   <a

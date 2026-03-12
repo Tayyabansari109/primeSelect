@@ -29,30 +29,60 @@
 
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
 
   line-clamp: 3; /* standard property */
 
   overflow: hidden;
 }
 
-.card-title-custom {
-  font-weight: 600;
+// .card-title-custom {
+//   font-weight: 600;
 
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//   -webkit-line-clamp: 2;
+//   line-clamp: 2;
 
-  overflow: hidden;
-}
+//   overflow: hidden;
+// }
+
+// .product-card {
+//   height: 420px;
+//   display: flex;
+//   flex-direction: column;
+// }
+// .product-card img {
+//   width: 400px;      /* image takes full card width */
+//   height: 400px; /* maximum height on big screens */
+//   // height: auto;      /* height scales with width */
+//   object-fit: cover;
+//   // display: block; /* removes tiny gaps below images */
+// }
 
 .product-card {
-  height: 420px;
-  display: flex;
-  flex-direction: column;
+  max-width: 100%;
 }
-.product-card img {
-  height: 200px;
-  object-fit: cover;
+
+.card-img-container {
+  width: 100%;
+  overflow: hidden;           /* hides extra image parts */
+  position: relative;
+}
+
+.card-img-container img {
+  width: 100%;                /* image fills container width */
+  height: auto;               /* scales height automatically */
+  display: block;
+  object-fit: cover;          /* crops image nicely if container ratio changes */
+}
+
+/* Optional: limit height on big screens */
+@media(min-width: 768px) {
+  .card-img-container {
+    height: 400px;           /* only big screens */
+  }
+  .card-img-container img {
+    height: 100%;
+  }
 }

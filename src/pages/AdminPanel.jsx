@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// import "./AdminPanel.scss";
 import { db } from "../config/firebase";
 import {
   collection,
@@ -86,38 +87,54 @@ function AdminPanel() {
         <button className="btn pink-btn mb-3" onClick={handleAddOrUpdate}>{editId ? "Update Product" : "Add Product"}</button>
       </div>
 
-      <h3>Products List</h3>
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            {/* <th>Price</th> */}
-            <th>Description</th>
-            <th>Affiliate Link</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((prod) => (
-            <tr key={prod.id}>
-              <td>
-                {prod.image && (
-                  <img src={prod.image} alt={prod.name} style={{ width: "80px" }} />
-                )}
-              </td>
-              <td>{prod.name}</td>
-              {/* <td>${prod.price}</td> */}
-              <td>{prod.description}</td>
-              <td><a href={prod.affiliateLink} target="_blank">Link</a></td>
-              <td>
-                <button className="btn btn-sm pink-btn me-2 mt-1" onClick={() => handleEdit(prod)}>Edit</button>
-                <button className="btn btn-sm pink-btn mt-2 " onClick={() => handleDelete(prod.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+<h3>Products List</h3>
+<div className="table-responsive">
+  <table className="table table-bordered">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Name</th>
+        {/* <th>Price</th> */}
+        <th>Description</th>
+        <th>Affiliate Link</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {products.map((prod) => (
+        <tr key={prod.id}>
+          <td>
+            {prod.image && (
+              <img src={prod.image} alt={prod.name} style={{ width: "80px" }} />
+            )}
+          </td>
+          <td>{prod.name}</td>
+          {/* <td>${prod.price}</td> */}
+          <td>{prod.description}</td>
+          <td>
+            <a href={prod.affiliateLink} target="_blank" rel="noreferrer">
+              Link
+            </a>
+          </td>
+          <td>
+            <button
+              className="btn btn-sm pink-btn me-2 mt-1"
+              onClick={() => handleEdit(prod)}
+            >
+              Edit
+            </button>
+            <button
+              className="btn btn-sm pink-btn mt-2"
+              onClick={() => handleDelete(prod.id)}
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
     </div>
   );
 }

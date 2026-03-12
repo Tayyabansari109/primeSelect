@@ -32,6 +32,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/primeSelect" element={<Home />} />
         <Route
           path="/admin"
           element={user ? <AdminPanel /> : <AdminLogin />}

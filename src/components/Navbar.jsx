@@ -28,6 +28,14 @@ const goHome = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
+// Close menu 
+
+const closeMenu = () => {
+  const nav = document.getElementById("nav");
+  if (nav.classList.contains("show")) {
+    nav.classList.remove("show");
+  }
+};
   return (
 <nav className="navbar navbar-expand-lg top-0 start-0 w-100">
   <div className="container">
@@ -49,13 +57,16 @@ const goHome = () => {
       <ul className="navbar-nav ms-auto">
 
         <li className="nav-item fw-bold">
-          <Link className="nav-link" to="/" onClick={goHome}>
+          <Link className="nav-link" to="/" onClick={() => {
+            goHome();
+            closeMenu();
+          }}>
             Home
           </Link>
         </li>
 
         <li className="nav-item fw-bold">
-          <Link className="nav-link" to="/admin">
+          <Link className="nav-link" to="/admin" onClick={closeMenu}>
             {user ? "Admin Panel" : "Login as Admin"}
           </Link>
         </li>
