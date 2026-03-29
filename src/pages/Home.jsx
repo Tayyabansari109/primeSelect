@@ -16,86 +16,107 @@ function Home() {
   const [lastDoc, setLastDoc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [moreLoading, setMoreLoading] = useState(false);
-  const [search, setSearch] = useState(""); // 🔥 search state
-  const [category, setCategory] = useState("All"); // 🔥 category state
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("All");
 
   const productsCollectionRef = collection(db, "products");
 
-  // 🔥 First load
+  // 🔥 Load initial products
   const getProducts = async () => {
     setLoading(true);
-    const q = query(productsCollectionRef, limit(9));
-    const data = await getDocs(q);
-    const productsData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    setProducts(productsData);
-    setLastDoc(data.docs[data.docs.length - 1]);
+    try {
+      const q = query(productsCollectionRef, limit(9));
+      const data = await getDocs(q);
+      const productsData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setProducts(productsData);
+      setLastDoc(data.docs[data.docs.length - 1] || null);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
     setLoading(false);
   };
 
-  // 🔥 Load more
+  // 🔥 Load more products (infinite scroll)
   const loadMore = async () => {
-    if (!lastDoc) return;
+    if (!lastDoc || moreLoading) return;
     setMoreLoading(true);
-    const q = query(productsCollectionRef, startAfter(lastDoc), limit(9));
-    const data = await getDocs(q);
-    const newProducts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    setProducts((prev) => [...prev, ...newProducts]);
-    setLastDoc(data.docs[data.docs.length - 1]);
+
+    try {
+      const q = query(productsCollectionRef, startAfter(lastDoc), limit(9));
+      const data = await getDocs(q);
+      const newProducts = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+
+      setProducts((prev) => {
+        const allProducts = [...prev, ...newProducts];
+        // Remove duplicates
+        const uniqueProducts = allProducts.filter(
+          (item, index, self) => index === self.findIndex((p) => p.id === item.id)
+        );
+        return uniqueProducts;
+      });
+
+      setLastDoc(data.docs[data.docs.length - 1] || null);
+    } catch (error) {
+      console.error("Error loading more products:", error);
+    }
+
     setMoreLoading(false);
   };
 
+  // 🔥 Infinite scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
+        !moreLoading &&
+        lastDoc
+      ) {
+        loadMore();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastDoc, moreLoading]);
+
+  // 🔥 Load products on mount
   useEffect(() => {
     getProducts();
   }, []);
 
-  if (loading) {
-    return <h2 className="text-center" id="margin">Loading Products...</h2>;
-  }
-
-  // 🔥 Filter products by search and category
+  // 🔥 Filter products
   const filteredProducts = products.filter((prod) => {
     const matchesCategory = category === "All" || prod.category === category;
     const matchesSearch = prod.name.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
+  if (loading) {
+    return <h2 className="text-center" id="margin">Loading Products...</h2>;
+  }
+
   return (
     <div className="home">
       <Hero />
 
-      <div className="container mt-4 " id="products">
-
-        {/* 🔥 Search + Category Filter */}
-        <div className="row mb-4 justify-content-center align-items-center ">
+      <div className="container mt-4" id="products">
+        <div className="row mb-4 justify-content-center align-items-center">
           <div className="col-md-6">
             <input
               type="text"
               className="form-control search-bar"
-
               placeholder="Search Products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              />
+            />
           </div>
-          {/* <div className="col-md-6">
-            <select
-            className="form-select"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            >
-            <option value="All">All Categories</option>
-            <option value="Health">Health</option>
-            <option value="Tech">Tech</option>
-            <option value="Fitness">Fitness</option>
-            {/* Add more categories here */}
-            {/* </select> */}
-          {/* </div> */} 
         </div>
-            <h2>Products</h2>
+
+        <h2>Products</h2>
 
         <div className="row">
           {filteredProducts.map((prod) => (
-            <div className="col-md-4 mb-4" key={prod.id}>
+            <div className="col-6 col-md-4 col-lg-3 mb-4" key={prod.id}>
               <div className="card product-card">
                 <img
                   src={prod.image}
@@ -104,9 +125,7 @@ function Home() {
                   loading="lazy"
                 />
                 <div className="card-body">
-                  {/* <h5 className="card-title-custom">{prod.name}</h5> */}
                   <p className="card-desc">{prod.description}</p>
-                  {/* <h6>${prod.price}</h6> */}
                   <a
                     href={prod.affiliateLink}
                     target="_blank"
@@ -121,17 +140,12 @@ function Home() {
           ))}
         </div>
 
-        {/* 🔥 Load More Button */}
-        {lastDoc && (
-          <div className="text-center mt-4">
-            <button
-              className="btn pink-btn"
-              onClick={loadMore}
-              disabled={moreLoading}
-            >
-              {moreLoading ? "Loading..." : "Load More"}
-            </button>
-          </div>
+        {filteredProducts.length === 0 && !loading && (
+          <p className="text-center">No products found.</p>
+        )}
+
+        {moreLoading && (
+          <p className="text-center mt-3">Loading more products...</p>
         )}
       </div>
     </div>
